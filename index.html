@@ -256,7 +256,6 @@
                         <span class="tag" onclick="setDim(210, 297)">A4</span>
                         <span class="tag" onclick="setDim(148, 210)">A5</span>
                         <span class="tag" onclick="setDim(100, 148)">明信片(A6)</span>
-                        <span class="tag" onclick="setDim(90, 54)">名片</span>
                         <span class="tag" onclick="setDim(89, 54)">小卡(3寸)</span>
                     </div>
                     <div class="row">
@@ -272,10 +271,10 @@
                         <div class="form-group">
                             <label>纸张材质</label>
                             <select id="d-paper" onchange="checkPaperConstraint()">
-                                <option value="5" data-no-lam="false">300g 铜版纸 (¥5.0)</option>
-                                <option value="8" data-no-lam="false">250g 哑粉纸 (¥8.0)</option>
-                                <option value="12" data-no-lam="true">300g 珠光纸 (¥12.0)</option>
-                                <option value="15" data-no-lam="true">350g 超感纸/超白卡 (¥15.0)</option>
+                                <option value="8" data-no-lam="false">300g 铜版纸</option>
+                                <option value="10" data-no-lam="false">400g 铜版纸</option>
+                                <option value="11" data-no-lam="true">300g 超感纸</option>
+                                <option value="10" data-no-lam="true">300g 纯棉卡纸</option>
                             </select>
                         </div>
                     </div>
@@ -284,7 +283,7 @@
                             <label>印刷面数</label>
                             <select id="d-print-side">
                                 <option value="0">单面印刷</option>
-                                <option value="2.0">双面印刷 (+¥2.0/张)</option>
+                                <option value="2.5">双面印刷</option>
                             </select>
                         </div>
                     </div>
@@ -297,10 +296,10 @@
                             <label>覆膜类型</label>
                             <select id="d-lam-type" onchange="toggleLamSide()">
                                 <option value="0">不覆膜</option>
-                                <option value="1.5">哑膜 (¥1.5/面)</option>
-                                <option value="1.5">亮膜 (¥1.5/面)</option>
-                                <option value="2.5">触感膜 (¥2.5/面)</option>
-                                <option value="3.5">镭射膜 (¥3.5/面)</option>
+                                <option value="1.5">哑膜</option>
+                                <option value="1.5">亮膜</option>
+                                <option value="2">触感膜</option>
+                                <option value="2">镭射膜</option>
                             </select>
                             <div id="lam-warning" class="warn-msg hidden">
                                 ⚠️ 此纸张表面纹理特殊，无法覆膜
@@ -331,7 +330,7 @@
                 <div class="form-group">
                     <label>画面尺寸 (mm)</label>
                     <div class="preset-tags">
-                        <span class="tag" onclick="setGDim(420, 594)">A2</span>
+                        <span class="tag" onclick="setGDim(210, 297)">A4</span>
                         <span class="tag" onclick="setGDim(297, 420)">A3</span>
                         <span class="tag" onclick="setGDim(500, 500)">50x50cm</span>
                         <span class="tag" onclick="setGDim(610, 1000)">1米长卷</span>
@@ -345,9 +344,10 @@
                 <div class="form-group">
                     <label>纸张材质</label>
                     <select id="g-paper">
-                        <option value="0.8">爱普生原装相纸 (¥0.8/cm)</option>
-                        <option value="1.5">哈内姆勒艺术纸 (¥1.5/cm)</option>
-                        <option value="1.2">泛太克油画布 (¥1.2/cm)</option>
+                        <option value="0.65">260克绒面相纸</option>
+                        <option value="0.7">泛太克230克增强粗面纸</option>
+                        <option value="0.9">泛太克210克蚀刻纸</option>
+                        <option value="2">泛太克305克硫化钡艺术纸</option>
                     </select>
                 </div>
 
