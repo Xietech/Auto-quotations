@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>印刷智能报价系统 - 旗舰版</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #4b5563;
+            --accent: #10b981;
+            --bg: #f3f4f6;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --warn: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg);
+            color: #1f2937;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* --- Header 样式更新 --- */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 15px 20px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* 居中对齐，如需左对齐改为 flex-start */
+            gap: 15px;
+        }
+
+        .logo-img {
+            height: 48px; /* Logo高度控制 */
+            width: auto;
+            background: rgba(255, 255, 255, 0.2); /* 仅作展示用的半透明背景 */
+            padding: 5px;
+            border-radius: 6px;
+            backdrop-filter: blur(5px);
+        }
+
+        .header-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-text h1 { margin: 0; font-size: 22px; line-height: 1.2; font-weight: 700; }
+        .header-text p { margin: 2px 0 0; font-size: 13px; opacity: 0.9; font-weight: 400; }
+        /* --------------------- */
+
+        .tabs { display: flex; border-bottom: 1px solid var(--border); }
+        .tab-btn {
+            flex: 1;
+            padding: 16px;
+            background: #f9fafb;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--secondary);
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: white;
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .content { display: flex; flex-wrap: wrap; }
+        .form-panel { flex: 1.2; padding: 30px; min-width: 320px; }
+        .visual-panel { 
+            flex: 0.8; 
+            padding: 30px; 
+            background: #f8fafc; 
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-width: 300px;
+        }
+
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; }
+        .row { display: flex; gap: 10px; }
+        .col { flex: 1; }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+            background: #fff;
+            transition: background 0.2s;
+        }
+        
+        input:disabled, select:disabled { 
+            background: #f3f4f6; 
+            color: #9ca3af; 
+            cursor: not-allowed; 
+            border-color: #e5e7eb;
+        }
+
+        .preset-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .tag {
+            font-size: 12px;
+            background: #eff6ff;
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 1px solid #bfdbfe;
+            transition: all 0.2s;
+        }
+        .tag:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .note { font-size: 12px; color: #6b7280; margin-top: 4px; }
+        
+        .warn-msg {
+            font-size: 12px;
+            color: var(--danger);
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #fef2f2;
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #fee2e2;
+        }
+
+        button.calc-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button.calc-btn:hover { background: #1d4ed8; }
+
+        button.copy-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background: white;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        button.copy-btn:hover { background: #eff6ff; }
+
+        canvas {
+            max-width: 100%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: white;
+            border: 1px solid #ccc;
+            transition: height 0.3s ease; 
+        }
+        .visual-legend { margin-top: 15px; display: flex; gap: 15px; font-size: 12px; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .dot { width: 10px; height: 10px; border-radius: 2px; }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #eff6ff;
+            border-radius: 8px;
+            border: 1px solid #bfdbfe;
+            display: none;
+        }
+        .result-box.show { display: block; }
+        .total-price { font-size: 28px; font-weight: bold; color: var(--primary); text-align: center; margin-bottom: 10px;}
+        .result-detail { font-size: 13px; color: #4b5563; border-top: 1px solid #dbeafe; padding-top: 10px; }
+        .result-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+
+        .hidden { display: none; }
+        .section-title { font-size: 14px; font-weight: bold; color: #374151; margin-top: 15px; margin-bottom: 10px; border-left: 3px solid var(--primary); padding-left: 8px; }
+
+        @media (max-width: 768px) {
+            .content { flex-direction: column; }
+            .visual-panel { border-left: none; border-top: 1px solid var(--border); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-content">
+            <!-- 
+               LOGO 放置区域 
+               1. 请将 src 替换为您公司的 Logo 图片 URL (例如: images/logo.png)
+               2. 下方目前使用了一个 SVG 矢量图作为占位符
+            -->
+            <img 
+                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xOSw4SDVjLTEuNjYsMC0zLDEuMzQtMywzdjZoMnY0aDE2djy0oMTl2LTFINjZIMTl6IE0xNiwyMkg4di01aDhWMjJ6IE0xOSwxMmctMS4xLDAtMi0uOS0yLTJzMC45LTIsMi0yczIsMC45LDIsMiBTMjAuMSwxMiwxOSwxMnoiLz48cGF0aCBkPSJNMTgsMS41SDZ2MmoxMloiLz48L3N2Zz4=" 
+                class="logo-img" 
+                alt="公司Logo"
+            >
+            
+            <div class="header-text">
+                <h1>印刷智能报价系统</h1>
+                <p>拼版计算 | 工艺约束 | 长卷模拟</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('digital')">广色域快印 (Sheet-Fed)</button>
+        <button class="tab-btn" onclick="switchTab('giclee')">艺术微喷 (Giclée)</button>
+    </div>
+
+    <div class="content">
+        <!-- 左侧：表单区 -->
+        <div class="form-panel">
+            
+            <!-- 快印表单 -->
+            <div id="digital-form">
+                <div class="form-group">
+                    <label>成品尺寸 (mm)</label>
+                    <div class="preset-tags">
+                        <span class="tag" onclick="setDim(210, 297)">A4</span>
+                        <span class="tag" onclick="setDim(148, 210)">A5</span>
+                        <span class="tag" onclick="setDim(100, 148)">明信片(A6)</span>
+                        <span class="tag" onclick="setDim(90, 54)">名片</span>
+                        <span class="tag" onclick="setDim(89, 54)">小卡(3寸)</span>
+                    </div>
+                    <div class="row">
+                        <div class="col"><input type="number" id="d-w" placeholder="宽" value="210"></div>
+                        <div class="col"><input type="number" id="d-h" placeholder="高" value="140"></div>
+                    </div>
+                    <div class="note">含每边2mm出血，系统自动计算拼版间距</div>
+                </div>
+
+                <div class="section-title">纸张与印刷</div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label>纸张材质</label>
+                            <select id="d-paper" onchange="checkPaperConstraint()">
+                                <option value="5" data-no-lam="false">300g 铜版纸 (¥5.0)</option>
+                                <option value="8" data-no-lam="false">250g 哑粉纸 (¥8.0)</option>
+                                <option value="12" data-no-lam="true">300g 珠光纸 (¥12.0)</option>
+                                <option value="15" data-no-lam="true">350g 超感纸/超白卡 (¥15.0)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label>印刷面数</label>
+                            <select id="d-print-side">
+                                <option value="0">单面印刷</option>
+                                <option value="2.0">双面印刷 (+¥2.0/张)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">覆膜工艺 (按大张面数计费)</div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label>覆膜类型</label>
+                            <select id="d-lam-type" onchange="toggleLamSide()">
+                                <option value="0">不覆膜</option>
+                                <option value="1.5">哑膜 (¥1.5/面)</option>
+                                <option value="1.5">亮膜 (¥1.5/面)</option>
+                                <option value="2.5">触感膜 (¥2.5/面)</option>
+                                <option value="3.5">镭射膜 (¥3.5/面)</option>
+                            </select>
+                            <div id="lam-warning" class="warn-msg hidden">
+                                ⚠️ 此纸张表面纹理特殊，无法覆膜
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label>覆膜面数</label>
+                            <select id="d-lam-side" disabled>
+                                <option value="1">单面覆膜</option>
+                                <option value="2">双面覆膜</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>印刷数量 (成品张/份数)</label>
+                    <input type="number" id="d-qty" value="100">
+                </div>
+
+                <button class="calc-btn" onclick="calculateDigital()">计算报价</button>
+            </div>
+
+            <!-- 微喷表单 -->
+            <div id="giclee-form" class="hidden">
+                <div class="form-group">
+                    <label>画面尺寸 (mm)</label>
+                    <div class="preset-tags">
+                        <span class="tag" onclick="setGDim(420, 594)">A2</span>
+                        <span class="tag" onclick="setGDim(297, 420)">A3</span>
+                        <span class="tag" onclick="setGDim(500, 500)">50x50cm</span>
+                        <span class="tag" onclick="setGDim(610, 1000)">1米长卷</span>
+                    </div>
+                    <div class="row">
+                        <div class="col"><input type="number" id="g-w" placeholder="宽"></div>
+                        <div class="col"><input type="number" id="g-h" placeholder="高"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>纸张材质</label>
+                    <select id="g-paper">
+                        <option value="0.8">爱普生原装相纸 (¥0.8/cm)</option>
+                        <option value="1.5">哈内姆勒艺术纸 (¥1.5/cm)</option>
+                        <option value="1.2">泛太克油画布 (¥1.2/cm)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>数量</label>
+                    <input type="number" id="g-qty" value="1">
+                </div>
+
+                <button class="calc-btn" onclick="calculateGiclee()">计算报价</button>
+            </div>
+
+            <!-- 结果展示 -->
+            <div id="result-box" class="result-box">
+                <div class="total-price">¥<span id="price-val">0.00</span></div>
+                <div class="result-detail" id="result-details"></div>
+                <button class="copy-btn" id="copyBtn" onclick="copyToClipboard()">
+                    <span>📋</span> 复制详细报价单
+                </button>
+            </div>
+        </div>
+
+        <!-- 右侧：可视化区 -->
+        <div class="visual-panel">
+            <label style="align-self: flex-start;">排版模拟视图</label>
+            <canvas id="layoutCanvas" width="400" height="280"></canvas>
+            
+            <div id="digital-legend" class="visual-legend">
+                <div class="legend-item"><div class="dot" style="background:#e0e7ff; border:1px solid #3b82f6;"></div>出血位(+2mm)</div>
+                <div class="legend-item"><div class="dot" style="background:#2563eb;"></div>成品区</div>
+                <div class="legend-item"><div class="dot" style="background:#eee;"></div>3mm间距</div>
+            </div>
+            
+            <div style="margin-top:15px; font-size:12px; color:#666; text-align:left; width:100%; line-height:1.6;">
+                <p id="desc-text"><strong>大张参数说明：</strong><br>
+                1. 纸张规格：733 x 510 mm<br>
+                2. 计费逻辑：总价 = (纸张单价 + 双面印费 + 覆膜费) × 消耗大张数</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const D_MAX_W = 733;
+    const D_MAX_H = 510;
+    const BLEED_TOTAL = 4; 
+    const GAP = 3; 
+    const G_ROLL_W = 610;
+    const G_MAX_PREVIEW_MM = 1000;
+
+    const canvas = document.getElementById('layoutCanvas');
+    const ctx = canvas.getContext('2d');
+    let clipboardText = "";
+
+    function setDim(w, h) {
+        document.getElementById('d-w').value = w;
+        document.getElementById('d-h').value = h;
+    }
+    function setGDim(w, h) {
+        document.getElementById('g-w').value = w;
+        document.getElementById('g-h').value = h;
+    }
+
+    function checkPaperConstraint() {
+        const paperSelect = document.getElementById('d-paper');
+        const selectedOption = paperSelect.options[paperSelect.selectedIndex];
+        const noLam = selectedOption.getAttribute('data-no-lam') === 'true';
+
+        const lamTypeSelect = document.getElementById('d-lam-type');
+        const lamSideSelect = document.getElementById('d-lam-side');
+        const warnMsg = document.getElementById('lam-warning');
+
+        if (noLam) {
+            lamTypeSelect.value = "0"; 
+            lamTypeSelect.disabled = true;
+            lamSideSelect.disabled = true;
+            warnMsg.classList.remove('hidden');
+        } else {
+            lamTypeSelect.disabled = false;
+            warnMsg.classList.add('hidden');
+            toggleLamSide();
+        }
+    }
+
+    function toggleLamSide() {
+        const type = document.getElementById('d-lam-type').value;
+        const sideSelect = document.getElementById('d-lam-side');
+        sideSelect.disabled = (type == "0");
+    }
+
+    function switchTab(mode) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('digital-form').classList.add('hidden');
+        document.getElementById('giclee-form').classList.add('hidden');
+        document.getElementById('result-box').classList.remove('show');
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        canvas.height = 280; 
+
+        if (mode === 'digital') {
+            document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+            document.getElementById('digital-form').classList.remove('hidden');
+            document.getElementById('digital-legend').classList.remove('hidden');
+            document.getElementById('desc-text').innerHTML = `<strong>大张参数说明：</strong><br>1. 纸张规格：733 x 510 mm<br>2. 系统优先匹配最省纸的旋转方向。`;
+        } else {
+            document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+            document.getElementById('giclee-form').classList.remove('hidden');
+            document.getElementById('digital-legend').classList.add('hidden');
+            document.getElementById('desc-text').innerHTML = `<strong>微喷预览说明：</strong><br>1. 预览图最大显示长度为 100cm<br>2. 超过部分将被隐藏，但价格计算不受影响。`;
+        }
+    }
+
+    // --- 快印逻辑 ---
+    function calculateDigital() {
+        const w = parseFloat(document.getElementById('d-w').value);
+        const h = parseFloat(document.getElementById('d-h').value);
+        const qty = parseInt(document.getElementById('d-qty').value);
+        
+        if(!w || !h || !qty) return alert("请输入完整尺寸和数量");
+
+        const paperEl = document.getElementById('d-paper');
+        const paperPrice = parseFloat(paperEl.value);
+        const paperName = paperEl.options[paperEl.selectedIndex].text.split('(')[0].trim();
+        const printSideCost = parseFloat(document.getElementById('d-print-side').value);
+        const printSideName = document.getElementById('d-print-side').options[document.getElementById('d-print-side').selectedIndex].text.split('(')[0].trim();
+        
+        const lamTypeEl = document.getElementById('d-lam-type');
+        const lamPrice = parseFloat(lamTypeEl.value); 
+        const lamName = lamTypeEl.options[lamTypeEl.selectedIndex].text.split('(')[0].trim();
+        const lamSideCount = parseInt(document.getElementById('d-lam-side').value);
+        
+        let costPerSheet = paperPrice + printSideCost;
+        if (lamPrice > 0) costPerSheet += (lamPrice * lamSideCount);
+
+        const unitW = w + BLEED_TOTAL;
+        const unitH = h + BLEED_TOTAL;
+
+        function calcFit(cont, item) {
+            if (item > cont) return 0;
+            return Math.floor((cont + GAP) / (item + GAP));
+        }
+
+        const colsA = calcFit(D_MAX_W, unitW);
+        const rowsA = calcFit(D_MAX_H, unitH);
+        const totalA = colsA * rowsA;
+
+        const colsB = calcFit(D_MAX_W, unitH);
+        const rowsB = calcFit(D_MAX_H, unitW);
+        const totalB = colsB * rowsB;
+
+        let bestCount, bestCols, bestRows, isRotated;
+        if (totalA >= totalB && totalA > 0) {
+            bestCount = totalA; bestCols = colsA; bestRows = rowsA; isRotated = false;
+        } else {
+            bestCount = totalB; bestCols = colsB; bestRows = rowsB; isRotated = true;
+        }
+
+        if (bestCount === 0) return alert(`尺寸过大！单张(含出血)超过 ${D_MAX_W}x${D_MAX_H}mm`);
+
+        const totalSheets = Math.ceil(qty / bestCount);
+        const totalPrice = totalSheets * costPerSheet;
+
+        let finishStr = printSideName;
+        if (lamPrice > 0) finishStr += ` + ${lamName}(${lamSideCount===1?"单面":"双面"})`;
+        else finishStr += " + 无覆膜";
+
+        showResult(totalPrice, [
+            { k: "成品规格", v: `${w}x${h}mm` },
+            { k: "纸张材质", v: paperName },
+            { k: "印刷工艺", v: finishStr },
+            { k: "拼版方式", v: `${isRotated ? "旋转" : "正常"} (1大张印${bestCount}个)` },
+            { k: "消耗纸张", v: `${totalSheets} 大张` },
+            { k: "单张成本", v: `¥${costPerSheet.toFixed(2)}` },
+            { k: "总价", v: `¥${totalPrice.toFixed(2)}` }
+        ]);
+
+        clipboardText = `【印刷询价单】\n类型：广色域快印\n尺寸：${w}x${h}mm\n数量：${qty}张\n材质：${paperName}\n工艺：${finishStr}\n----------------\n拼版：1印${bestCount}\n耗材：${totalSheets}大张\n----------------\n预估总价：¥${totalPrice.toFixed(2)}`;
+
+        const drawW = isRotated ? h : w;
+        const drawH = isRotated ? w : h;
+        drawDigitalLayout(bestCols, bestRows, drawW, drawH);
+    }
+
+    function drawDigitalLayout(cols, rows, itemW, itemH) {
+        const scale = canvas.width / D_MAX_W;
+        canvas.height = D_MAX_H * scale;
+
+        ctx.fillStyle = '#e5e7eb'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#9ca3af'; ctx.setLineDash([5, 5]); ctx.strokeRect(0, 0, canvas.width, canvas.height); ctx.setLineDash([]);
+
+        const unitW = itemW + BLEED_TOTAL;
+        const unitH = itemH + BLEED_TOTAL;
+        const contentW = cols * unitW + (cols - 1) * GAP;
+        const contentH = rows * unitH + (rows - 1) * GAP;
+        const startX = (D_MAX_W - contentW) / 2;
+        const startY = (D_MAX_H - contentH) / 2;
+
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                let x = (startX + c * (unitW + GAP)) * scale;
+                let y = (startY + r * (unitH + GAP)) * scale;
+                
+                ctx.fillStyle = '#eff6ff'; ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 1;
+                ctx.fillRect(x, y, unitW*scale, unitH*scale);
+                ctx.strokeRect(x, y, unitW*scale, unitH*scale);
+
+                ctx.fillStyle = '#2563eb';
+                ctx.fillRect(x + 2*scale, y + 2*scale, itemW*scale, itemH*scale);
+            }
+        }
+    }
+
+    // --- 微喷逻辑 ---
+    function calculateGiclee() {
+        const w = parseFloat(document.getElementById('g-w').value);
+        const h = parseFloat(document.getElementById('g-h').value);
+        const qty = parseInt(document.getElementById('g-qty').value);
+        const paperEl = document.getElementById('g-paper');
+        const pricePerCm = parseFloat(paperEl.value);
+        const paperName = paperEl.options[paperEl.selectedIndex].text.split('(')[0].trim();
+
+        if(!w || !h || !qty) return alert("请输入完整信息");
+        if(Math.min(w, h) > G_ROLL_W) return alert("尺寸超宽 (限610mm)");
+
+        let costLenA = Infinity, costLenB = Infinity;
+        if(w <= G_ROLL_W) costLenA = Math.ceil(qty / Math.floor(G_ROLL_W / w)) * h;
+        if(h <= G_ROLL_W) costLenB = Math.ceil(qty / Math.floor(G_ROLL_W / h)) * w;
+
+        let usedLenMm = Math.min(costLenA, costLenB);
+        let totalPrice = (usedLenMm / 10) * pricePerCm;
+        let layoutType = (costLenA <= costLenB) ? 'A' : 'B';
+        let layoutStr = (layoutType === 'A') ? "横排 (消耗高度)" : "竖排 (消耗宽度)";
+
+        showResult(totalPrice, [
+            { k: "画面尺寸", v: `${w} x ${h} mm` },
+            { k: "纸张材质", v: paperName },
+            { k: "排版方式", v: layoutStr },
+            { k: "消耗卷长", v: `${(usedLenMm/10).toFixed(1)} cm` },
+            { k: "总价", v: `¥${totalPrice.toFixed(2)}` }
+        ]);
+
+        clipboardText = `【印刷询价单】\n类型：艺术微喷\n尺寸：${w}x${h}mm\n材质：${paperName}\n数量：${qty}份\n----------------\n排版：${layoutStr}\n耗材：${(usedLenMm/10).toFixed(1)} cm\n----------------\n预估总价：¥${totalPrice.toFixed(2)}`;
+
+        drawGicleeLayout(layoutType, w, h, qty);
+    }
+
+    function drawGicleeLayout(type, w, h, qty) {
+        const scale = canvas.width / G_ROLL_W;
+        
+        const itemDrawW_mm = (type === 'A' ? w : h);
+        const itemDrawH_mm = (type === 'A' ? h : w);
+        const perRow = Math.floor(G_ROLL_W / itemDrawW_mm);
+        const totalRows = Math.ceil(qty / perRow);
+        const totalHeightMm = totalRows * itemDrawH_mm;
+        
+        let displayHeightMm = totalHeightMm;
+        let isTruncated = false;
+        if (totalHeightMm > G_MAX_PREVIEW_MM) {
+            displayHeightMm = G_MAX_PREVIEW_MM;
+            isTruncated = true;
+        }
+
+        const headerH = 40;
+        const footerH = isTruncated ? 60 : 30;
+        canvas.height = headerH + (displayHeightMm * scale) + footerH;
+
+        ctx.fillStyle = '#e5e7eb'; ctx.fillRect(0,0, canvas.width, canvas.height);
+        ctx.fillStyle = '#666'; ctx.font = '14px Arial'; ctx.textAlign = 'center';
+        ctx.fillText("卷筒纸宽度 610mm (连续进纸)", canvas.width/2, 25);
+
+        let startY = headerH; 
+        let currentHeightMm = 0; 
+
+        for(let r=0; r<totalRows; r++) {
+            if (currentHeightMm + itemDrawH_mm > displayHeightMm && isTruncated) break;
+
+            for(let c=0; c<perRow; c++) {
+                if (r * perRow + c >= qty) break;
+                let x = c * itemDrawW_mm * scale;
+                let y = startY + (r * itemDrawH_mm * scale);
+                
+                ctx.fillStyle = '#10b981'; ctx.strokeStyle = '#fff';
+                ctx.fillRect(x, y, itemDrawW_mm * scale, itemDrawH_mm * scale);
+                ctx.strokeRect(x, y, itemDrawW_mm * scale, itemDrawH_mm * scale);
+            }
+            currentHeightMm += itemDrawH_mm;
+        }
+
+        if (isTruncated) {
+            const bottomY = canvas.height - footerH;
+            let gradient = ctx.createLinearGradient(0, bottomY - 50, 0, canvas.height);
+            gradient.addColorStop(0, "rgba(229, 231, 235, 0)");
+            gradient.addColorStop(0.8, "rgba(229, 231, 235, 1)");
+            ctx.fillStyle = gradient; ctx.fillRect(0, bottomY - 50, canvas.width, footerH + 50);
+
+            ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2; ctx.setLineDash([10, 5]);
+            ctx.beginPath(); ctx.moveTo(0, bottomY); ctx.lineTo(canvas.width, bottomY); ctx.stroke(); ctx.setLineDash([]);
+
+            ctx.fillStyle = '#b45309'; ctx.font = 'bold 12px Arial';
+            ctx.fillText(`⚠️ 预览已截断 (实际 ${(totalHeightMm/1000).toFixed(2)}米)`, canvas.width/2, bottomY + 25);
+        } else {
+            let endY = headerH + totalHeightMm * scale;
+            ctx.strokeStyle = '#9ca3af'; ctx.setLineDash([5, 5]);
+            ctx.beginPath(); ctx.moveTo(0, endY); ctx.lineTo(canvas.width, endY); ctx.stroke();
+            ctx.fillStyle = '#666'; ctx.font = '12px Arial';
+            ctx.fillText(`总长度 ${(totalHeightMm/10).toFixed(1)} cm`, canvas.width/2, endY + 20);
+        }
+    }
+
+    function showResult(price, details) {
+        document.getElementById('result-box').classList.add('show');
+        document.getElementById('price-val').innerText = price.toFixed(2);
+        
+        const html = details.map(d => `
+            <div class="result-row">
+                <span>${d.k}</span>
+                <span style="font-weight:600">${d.v}</span>
+            </div>
+        `).join('');
+        document.getElementById('result-details').innerHTML = html;
+        
+        const btn = document.getElementById('copyBtn');
+        btn.innerHTML = '<span>📋</span> 复制详细报价单';
+        btn.style.background = 'white'; btn.style.color = 'var(--primary)';
+    }
+
+    function copyToClipboard() {
+        if (!clipboardText) return;
+        navigator.clipboard.writeText(clipboardText).then(() => {
+            const btn = document.getElementById('copyBtn');
+            btn.innerHTML = '<span>✅</span> 已复制！';
+            btn.style.background = '#ecfdf5'; btn.style.color = '#059669';
+            setTimeout(() => {
+                btn.innerHTML = '<span>📋</span> 复制详细报价单';
+                btn.style.background = 'white'; btn.style.color = 'var(--primary)';
+            }, 2000);
+        });
+    }
+</script>
+
+</body>
+</html>
